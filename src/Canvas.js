@@ -8,19 +8,36 @@ class Canvas extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      items,
+      error: null,
+      isLoaded: false,
+      items: []
     };
   }
-  render() {
-    const boxes = this.state.items.map(item => {
-      return (<Item dragDisabled="true"
-                    title={item.title}
-                    url={item.url}
-                    key={item.id}
-                    x={item.positionX}
-                    y={item.positionY}
-              />);
+  componentDidMount() {
+    fetch('./items.json')
+    .then(res => res.json())
+    .then(result => {
+      this.setState({
+        isLoaded: true,
+        items: result.items,
+      });
+    }, (error) => {
+      console.error(error);
+      this.setState({
+        isLoaded: true,
+        error,
+      });
     });
+  }
+  render() {
+    let boxes = [];
+    if (this.state.isLoaded) {
+      boxes = items.map(item => {
+        return (<Item dragDisabled="true"
+                      data={item}
+                />);
+      });
+    }
     return (
       <Draggable>
         <div className="Canvas">

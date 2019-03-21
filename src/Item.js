@@ -6,8 +6,6 @@ let Draggable = require('react-draggable');
 class Item extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
     this.onDragStart = this.onDragStart.bind(this);
     this.onDragStop = this.onDragStop.bind(this);
     this.onDrag = this.onDrag.bind(this);
@@ -15,7 +13,7 @@ class Item extends Component {
     this.onMouseDown = this.onMouseDown.bind(this);
   }
   render() {
-    const thumbnailUrl = Utils.ytThumbnailUrlForUrl(this.props.url);
+    const thumbnailUrl = Utils.ytThumbnailUrlForUrl(this.props.data.url);
     return (
       <Draggable onStart={this.onDragStart}
                  onStop={this.onDragStop}
@@ -24,14 +22,14 @@ class Item extends Component {
                  onMouseUp={this.onMouseUp}
                  disabled={false}>
         <div className="box" style={{
-          left: this.props.x,
-          top: this.props.y,
+          left: this.props.data.positionX,
+          top: this.props.data.positionY,
         }} onClick={this.onClick}>
           <img alt="thumbnail"
                src={thumbnailUrl} 
                className="thumbnail"
                draggable="false"/>
-          {this.props.title}
+          {this.props.data.title}
         </div>
       </Draggable>
     );
@@ -41,7 +39,11 @@ class Item extends Component {
     return true;
   }
   onDragStop(e, _) {
-    console.log('onDragStop');
+    // TODO
+    // fetch('./item-write.json', {
+    //   method: 'post',
+    //   body: JSON.stringify(this.props.data),
+    // });
   }
   onDrag(e, _) {
   }
@@ -53,7 +55,6 @@ class Item extends Component {
   }
   onClick(e, _) {
     e.stopPropagation();
-    debugger;
     if (e.clientX !== this.state.mouseDownClientX
      || e.clientY !== this.state.mouseDownClientY) {
       // Something's getting dragged
