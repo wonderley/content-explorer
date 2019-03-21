@@ -33,7 +33,7 @@ class Canvas extends Component {
     let boxes = [];
     if (this.state.isLoaded) {
       boxes = items.map(item => {
-        return (<Item dragDisabled="true"
+        return (<Item dragDisabled={false}
                       data={item}
                 />);
       });

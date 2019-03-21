@@ -20,7 +20,7 @@ class Item extends Component {
                  onDrag={this.onDrag}
                  onMouseDown={this.onMouseDown}
                  onMouseUp={this.onMouseUp}
-                 disabled={false}>
+                 disabled={this.props.dragDisabled}>
         <div className="box" style={{
           left: this.props.data.positionX,
           top: this.props.data.positionY,
