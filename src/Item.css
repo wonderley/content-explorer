@@ -11,8 +11,11 @@
   justify-content: center;
   text-overflow: ellipsis;
   user-select: none;
-  padding: 5% 5% 5% 5%;
 }
 
 .thumbnail {
+  display: block;
+  max-width: 180px;
+  width: auto;
+  height: auto;
 }

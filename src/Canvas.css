@@ -1,19 +1,5 @@
 .Canvas {
   background-color: #282c34;
   min-height: 100vh;
-  font-size: calc(10px + 2vmin);
-}
-
-.box {
-  width: 200px;
-  height: 100px;
-  background: #61dafb;
-  opacity: .8;
-  border-radius: 10px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-overflow: ellipsis;
+  font-size: calc(2vmin);
 }

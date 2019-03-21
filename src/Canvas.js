@@ -12,17 +12,13 @@ class Canvas extends Component {
     };
   }
   render() {
-    let x = 0;
-    let y = 0;
     const boxes = this.state.items.map(item => {
-      x += 50;
-      y += 50;
       return (<Item dragDisabled="true"
                     title={item.title}
                     url={item.url}
                     key={item.id}
-                    x={x}
-                    y={y}
+                    x={item.positionX}
+                    y={item.positionY}
               />);
     });
     return (

@@ -31,7 +31,6 @@ class Item extends Component {
                src={thumbnailUrl} 
                className="thumbnail"
                draggable="false"/>
-          <br/>
           {this.props.title}
         </div>
       </Draggable>
