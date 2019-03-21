@@ -1,0 +1,18 @@
+.box {
+  width: 200px;
+  height: 200px;
+  background: #61dafb;
+  opacity: .8;
+  border-radius: 10px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-overflow: ellipsis;
+  user-select: none;
+  padding: 5% 5% 5% 5%;
+}
+
+.thumbnail {
+}

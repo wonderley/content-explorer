@@ -1,0 +1,29 @@
+{
+  "items": [
+    {
+      "id": 0,
+      "url": "https://www.youtube.com/watch?v=ta3L35wsE6o",
+      "title": "Art of Smash Ultimate: Beginner - Part 1"
+    },
+    {
+      "id": 1,
+      "url": "https://www.youtube.com/watch?v=UopyuXelF7k",
+      "title": "Art of Smash Ultimate: Advanced - Part 2"
+    },
+    {
+      "id": 2,
+      "url": "https://www.youtube.com/watch?v=Fdf0P3UVh90",
+      "title": "Art of Smash Ultimate: Expert - Part 3"
+    },
+    {
+      "id": 3,
+      "url": "https://www.youtube.com/watch?v=TVtAwIpeQ7k",
+      "title": "Art of Smash Ultimate: Master - Part 4"
+    },
+    {
+      "id": 4,
+      "url": "https://www.youtube.com/watch?v=g17gk1_fA5o",
+      "title": "Art of Smash Ultimate: Godlike - Mentality"
+    }
+  ]
+}
