@@ -1,0 +1,1 @@
+psql postgres -c "SELECT * FROM Items;"
