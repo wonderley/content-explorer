@@ -12,6 +12,7 @@ class Canvas extends Component {
       isLoaded: false,
       items: []
     };
+    this.onWheel = this.onWheel.bind(this);
   }
   componentDidMount() {
     fetch('./items.json')
@@ -40,11 +41,20 @@ class Canvas extends Component {
     }
     return (
       <Draggable>
-        <div className="Canvas">
+        <div className="Canvas" onWheel={this.onWheel}>
           {boxes}
         </div>
       </Draggable>
     );
+  }
+
+  onWheel(e, _) {
+    const dX = e.deltaX,
+          dY = e.deltaY;
+    if (dX !== 0) console.log(`dX: ${dX}`);
+    if (dY !== 0) console.log(`dY: ${dY}`);
+    e.preventDefault();
+    e.stopPropagation();
   }
 }
 
