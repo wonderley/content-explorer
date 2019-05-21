@@ -14,16 +14,79 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, resp
   console.log('Dialogflow Request body: ' + JSON.stringify(request.body));
  
   function welcome(agent) {
-    agent.add(`Hey, I'm Blockchain Buddy. I'm a great way to discover content about blockchain!`);
+    agent.add(`Hey, I'm Blockchain Buddy. I'm a great way to discover content about blockchain! Would you like to see some content?`);
+    // agent.context.set({
+    //   name: 'BBWelcomeIntent-followup',
+    // });
     agent.add(new Suggestion(`Show content`));
   }
- 
+
   function fallback(agent) {
     agent.add(`I didn't understand`);
     agent.add(`I'm sorry, can you try again?`);
   }
 
-  function yourFunctionHandler(agent) {
+  function contentIntentHandler(agent) {
+    agent.requestSource = agent.ACTIONS_ON_GOOGLE;
+    // delete welcome context... still not deleting
+    agent.context.delete('bbwelcomeintent-followup');
+    const items = [
+      {
+        itemID: 0,
+        channel: 'Hardcore Crypto',
+        url: 'https://www.youtube.com/watch?v=pL1bFwXjvVQ',
+        title: 'Vitalik Buterin Explains Ethereum',
+        type: 'video',
+      },
+      {
+        itemID: 1,
+        channel: 'The Crypto Lark',
+        url: 'https://www.youtube.com/watch?v=lqu9RawKISM',
+        title: 'This Is How Ethereum Scales - Matic Network Crypto',
+        type: 'video',
+      },
+      {
+        itemID: 2,
+        channel: 'Blockgeeks',
+        url: 'https://www.youtube.com/watch?v=IsXvoYeJxKA',
+        title: 'What is Ethereum? Beginners Video Guide',
+        type: 'video',
+      },
+    ];
+    console.log(JSON.stringify(agent.agentVersion));
+    const context = agent.context.get('content-state');
+    console.log(JSON.stringify(context));
+    let itemIdx = (context 
+                && context.parameters
+                && context.parameters.itemIdx) || 0;
+    const bFirstRequest = itemIdx === 0;
+    itemIdx = itemIdx % items.length;
+    if (bFirstRequest) {
+      agent.add(`Here's some content related to Ethereum.`);
+    } else {
+      agent.add(`Here's more content related to Ethereum.`);
+    }
+    agent.context.set({
+      name: 'content-state',
+      parameters: {
+        itemIdx: itemIdx + 1
+      }
+    });
+    // agent.context.set({
+    //   name: 'Showcontentintent-followup',
+    // });
+    const item = items[itemIdx];
+    if (item.type === 'video') {
+      handleVideo(agent, item);
+    }
+  }
+
+  function endSession(agent) {
+    agent.end('Thanks for using Blockchain Buddy.')
+  }
+
+  function handleVideo(agent, item) {
+    const conv = agent.conv(); // Get Actions on Google library conv instance
     const hasScreen =
       conv.surface.capabilities.has('actions.capability.SCREEN_OUTPUT');
     const hasAudio =
@@ -34,62 +97,29 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, resp
       conv.surface.capabilities.has('actions.capability.WEB_BROWSER');
     const hasCustomStage =
       conv.surface.capabilities.has('actions.capability.CUSTOM_STAGE');
-    const items = [
-      {
-        itemID: 0,
-        channel: 'Hardcore Crypto',
-        url: 'https://www.youtube.com/watch?v=pL1bFwXjvVQ',
-        title: 'Vitalik Buterin Explains Ethereum',
-      },
-      {
-        itemID: 1,
-        channel: 'The Crypto Lark',
-        url: 'https://www.youtube.com/watch?v=lqu9RawKISM',
-        title: 'This Is How Ethereum Scales - Matic Network Crypto',
-      },
-      {
-        itemID: 2,
-        channel: 'Blockgeeks',
-        url: 'https://www.youtube.com/watch?v=IsXvoYeJxKA',
-        title: 'What is Ethereum? Beginners Video Guide',
-      },
-    ];
-    console.log(JSON.stringify(agent.agentVersion));
-    const context = agent.getContext('bbcontext');
-    console.log(JSON.stringify(context));
-    let itemIdx = (context 
-                && context.parameters
-                && context.parameters.itemIdx) || 0;
-    itemIdx = itemIdx % items.length;
-    const bFirstRequest = itemIdx === 0;
-    if (bFirstRequest) {
-      agent.add(`Here's some content related to Ethereum.`);
+    if (hasScreen) {
+      agent.add(new Card({
+          title: `${item.title}`,
+          imageUrl: ytThumbnailUrlForUrl(item.url),
+          text: `${item.channel}`,
+          buttonText: 'Watch video',
+          buttonUrl: `${item.url}`,
+        })
+      );
+      agent.add(new Suggestion(`Show more content`));
     } else {
-      agent.add(`Here's more content related to Ethereum.`);
+      // speaker
+      conv.ask(`From ${item.channel}: ${item.title}. Do you want to play the audio to this video?`);
+      agent.add(conv);
     }
-    const item = items[itemIdx];
-    agent.add(new Card({
-        title: `${item.title}`,
-        imageUrl: ytThumbnailUrlForUrl(item.url),
-        text: `${item.channel}`,
-        buttonText: 'Watch video',
-        buttonUrl: `${item.url}`,
-      })
-    );
-    agent.setContext({
-      name: 'bbcontext',
-      parameters: {
-        itemIdx: itemIdx + 1
-      }
-    });
-    agent.add(new Suggestion(`Show more content`));
   }
 
-  // function googleAssistantHandler(agent) {
-  //     let conv = agent.conv(); // Get Actions on Google library conv instance
-  //     conv.ask('Hello from the Actions on Google client library!'); // Use Actions on Google library
-  //     agent.add(conv); // Add Actions on Google library responses to your agent's response
-  // }
+  function playAudioForVideo(agent) {
+    const conv = agent.conv();
+    conv.ask(`Sorry, I can't do that yet.`);
+    agent.add(conv);
+    //contentIntentHandler(agent);
+  }
 
   function ytThumbnailUrlForID(id) {
     // https://gist.github.com/protrolium/8831763
@@ -116,7 +146,10 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, resp
   let intentMap = new Map();
   intentMap.set('BB Welcome Intent', welcome);
   intentMap.set('Default Fallback Intent', fallback);
-  intentMap.set('Show content intent', yourFunctionHandler);
-  // intentMap.set('your intent name here', googleAssistantHandler);
+  intentMap.set('Show content intent', contentIntentHandler);
+  intentMap.set('Show content intent - yes', playAudioForVideo);
+  intentMap.set('Show content intent - no', endSession);
+  intentMap.set('BB Welcome Intent - yes', contentIntentHandler);
+  intentMap.set('BB Welcome Intent - no', endSession);
   agent.handleRequest(intentMap);
 });
